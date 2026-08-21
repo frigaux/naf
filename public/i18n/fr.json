@@ -1,0 +1,22 @@
+{
+  "commun": {
+    "oui": "oui",
+    "non": "non"
+  },
+  "components": {
+    "entreprises": {
+      "selecteur_naf": {
+        "liste_activites": "Liste des activités",
+        "filtrer_activites": "Filtrer les activités",
+        "liste_entreprises": "Liste des entreprises"
+      },
+      "fiche_entreprise": {
+        "naf": "Code NAF",
+        "siret": "SIRET",
+        "date_creation": "Date de création",
+        "etablissement_siege": "Etablissement siège",
+        "effectif": "Effectif"
+      }
+    }
+  }
+}

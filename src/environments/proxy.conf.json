@@ -1,0 +1,7 @@
+{
+  "/informatique/angular/naf/json/**": {
+    "target": "http://fabien.rigaux.free.fr",
+    "secure": false,
+    "changeOrigin": true
+  }
+}

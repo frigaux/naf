@@ -1,0 +1,26 @@
+<mat-accordion>
+  <mat-expansion-panel #panneauSelecteur>
+    <mat-expansion-panel-header>
+      <mat-panel-title>{{ 'components.entreprises.selecteur_naf.liste_activites' | translate }}</mat-panel-title>
+    </mat-expansion-panel-header>
+    <app-selecteur-naf (nafRev2)="afficherCarte($event)"></app-selecteur-naf>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel #panneauCarte>
+    <mat-expansion-panel-header>
+      <mat-panel-title>{{ 'components.entreprises.selecteur_naf.liste_entreprises' | translate }}</mat-panel-title>
+      <mat-panel-description>
+        @if (nafRev2()) {
+          <span [innerHTML]="`${nafRev2()?.nom} (${nafRev2()?.code})`"></span>
+        }
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <div class="conteneur">
+      <div class="ligne">
+        <app-carte-entreprises #carteEntreprises
+                               (entrepriseSelectionnee)="afficherEntreprise($event)"></app-carte-entreprises>
+        <app-fiche-entreprise #ficheEntreprise></app-fiche-entreprise>
+      </div>
+    </div>
+  </mat-expansion-panel>
+</mat-accordion>

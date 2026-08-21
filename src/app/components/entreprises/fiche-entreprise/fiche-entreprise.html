@@ -1,0 +1,33 @@
+@if (entreprise(); as entreprise) {
+  <mat-card appearance="outlined">
+    <mat-card-header>
+      <mat-card-title>{{ entreprise.etablissement }}</mat-card-title>
+      <mat-card-subtitle>
+        {{ entreprise.typeVoie }} {{ entreprise.voie }}<br />
+        {{ entreprise.codePostal }} {{ entreprise.commune }}
+      </mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="ligne">
+        <label>{{ 'components.entreprises.fiche_entreprise.naf' | translate }}</label>
+        <span>{{ entreprise.naf }}</span>
+      </div>
+      <div class="ligne">
+        <label>{{ 'components.entreprises.fiche_entreprise.siret' | translate }}</label>
+        <span>{{ entreprise.siret }}</span>
+      </div>
+      <div class="ligne">
+        <label>{{ 'components.entreprises.fiche_entreprise.date_creation' | translate }}</label>
+        <span>{{ entreprise.dateCreation | date: 'dd/MM/yyyy' }}</span>
+      </div>
+      <div class="ligne">
+        <label>{{ 'components.entreprises.fiche_entreprise.etablissement_siege' | translate }}</label>
+        <span>{{ entreprise.etablissementSiege ? ('commun.oui' | translate) : ('commun.non' | translate) }}</span>
+      </div>
+      <div class="ligne">
+        <label>{{ 'components.entreprises.fiche_entreprise.effectif' | translate }}</label>
+        <span>{{ entreprise.effectif }}</span>
+      </div>
+    </mat-card-content>
+  </mat-card>
+}

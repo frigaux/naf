@@ -1,0 +1,42 @@
+@if (chargement()) {
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+}
+
+@if (!chargement()) {
+  <mat-form-field class="example-form-field">
+    <mat-label>{{ 'components.entreprises.selecteur_naf.filtrer_activites' | translate }}</mat-label>
+    <input matInput type="text" [formField]="formulaire" (keyup)="filtrer()">
+    @if (formulaire().value()) {
+      <mat-icon aria-label="Clear" (click)="reinitialiser()">clear</mat-icon>
+    }
+  </mat-form-field>
+
+  <mat-tree #tree [dataSource]="nafRev2s()" [childrenAccessor]="node => node.enfants">
+    <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
+      <button [matButton]="node.matButton" (click)="nafClicked(node)">
+        <span [innerHTML]="`${node.nom} (${node.code})`"></span>
+      </button>
+    </mat-tree-node>
+
+    <mat-tree-node *matTreeNodeDef="let node;when: hasEnfants" matTreeNodePadding
+                   [cdkTreeNodeTypeaheadLabel]="node.nom">
+      @if (node.code.length > 3) {
+        <div class="branche">
+          <mat-icon matTreeNodeToggle
+                     [aria-label]="tree.isExpanded(node) ? 'Expand branch' : 'Collapse branch'">
+            {{ tree.isExpanded(node) ? 'expand_more' : 'chevron_right' }}
+          </mat-icon>
+          <button [matButton]="node.matButton" (click)="nafClicked(node)">
+            <span [innerHTML]="`${node.nom} (${node.code})`"></span>
+          </button>
+        </div>
+      } @else {
+        <div class="branche" matTreeNodeToggle
+             [aria-label]="tree.isExpanded(node) ? 'Expand branch' : 'Collapse branch'">
+          <mat-icon> {{ tree.isExpanded(node) ? 'expand_more' : 'chevron_right' }}</mat-icon>
+          <span [innerHTML]="node.nom"></span>
+        </div>
+      }
+    </mat-tree-node>
+  </mat-tree>
+}
