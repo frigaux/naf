@@ -76,16 +76,14 @@ export class CarteEntreprises implements AfterViewInit {
       this.chargement.set(true);
       this.referentiel.entreprises(nafRev2.code).subscribe((entreprises) => {
         entreprises.forEach((entreprise) => {
-          if (entreprise.latitude && entreprise.longitude) {
-            L.marker([entreprise.latitude, entreprise.longitude], {
-              icon: CarteEntreprises.iconeMarqueur,
+          L.marker([entreprise.latitude, entreprise.longitude], {
+            icon: CarteEntreprises.iconeMarqueur,
+          })
+            .addTo(this.carte)
+            .on('mouseover', () => {
+              this.entrepriseSelectionnee.emit(entreprise);
             })
-              .addTo(this.carte)
-              .on('mouseover', () => {
-                this.entrepriseSelectionnee.emit(entreprise);
-              })
-              .addTo(this.groupeMarqueurs);
-          }
+            .addTo(this.groupeMarqueurs);
         });
         this.chargement.set(false);
       });

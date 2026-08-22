@@ -9,9 +9,7 @@ export interface Entreprise {
   voie: string;
   codePostal: string;
   commune: string;
-  coordonneeLambertAbscisse: number;
-  coordonneeLambertOrdonnee: number;
+  longitude: number;
+  latitude: number;
   effectif?: string;
-  longitude?: number;
-  latitude?: number;
 }

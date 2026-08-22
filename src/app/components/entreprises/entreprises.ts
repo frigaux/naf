@@ -39,6 +39,9 @@ export class Entreprises implements OnInit {
   // données pour la vue
   protected nafRev2: WritableSignal<NafRev2 | undefined> = signal(undefined);
 
+  // TODO : sélecteur de ville et rayon affichage des marqueurs
+  // TODO : regénérer les JSON des entreprises
+
   ngOnInit(): void {
     this.panneauSelecteur().open();
     this.panneauCarte().close();

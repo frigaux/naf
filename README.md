@@ -19,8 +19,6 @@ ng add @angular/material
 ng generate environments
 npm install leaflet
 npm install --save-dev @types/leaflet
-npm install proj4
-npm install --save-dev @types/proj4
 ```
 
 ## Development server
