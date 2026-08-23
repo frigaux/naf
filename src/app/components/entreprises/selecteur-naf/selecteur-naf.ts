@@ -36,7 +36,7 @@ import { MatProgressBar } from '@angular/material/progress-bar';
   styleUrl: './selecteur-naf.sass',
 })
 export class SelecteurNAF implements OnInit {
-  nafRev2 = output<NafRev2>();
+  outputNafRev2 = output<NafRev2>({ alias: 'nafRev2' });
 
   private referentiel = inject(Referentiel);
 
@@ -94,7 +94,7 @@ export class SelecteurNAF implements OnInit {
   protected nafClicked(node: any) {
     this.reinitialiserMatButton(this.nafRev2s());
     node.matButton = 'filled';
-    this.nafRev2.emit(node);
+    this.outputNafRev2.emit(node);
   }
 
   private reinitialiserMatButton(nafRev2s: Array<NafRev2>) {

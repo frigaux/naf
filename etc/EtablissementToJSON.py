@@ -71,5 +71,5 @@ class EtablissementToJSON:
                     self.convert(naf)
 
 
-# EtablissementToJSON().convertAll()
-EtablissementToJSON().convert('62.0')
+EtablissementToJSON().convertAll()
+# EtablissementToJSON().convert('62.0')

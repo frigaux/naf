@@ -4,6 +4,8 @@ import { Observable, Observer } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { NafRev2 } from './naf-rev2';
 import { Entreprise } from './entreprise';
+import { Commune } from './commune';
+import { LatLngBounds, LatLngBoundsExpression, LatLngBoundsLiteral } from 'leaflet';
 
 @Service()
 export class Referentiel {
@@ -69,18 +71,45 @@ export class Referentiel {
     }
   }
 
-  public entreprises(naf: string): Observable<Array<Entreprise>> {
+  public entreprises(naf: string, maxBounds: LatLngBounds): Observable<Array<Entreprise>> {
     return new Observable((observer: Observer<Array<Entreprise>>) => {
       this.http
         .get<Array<Entreprise>>(`${environment.urlReferentiel}/${naf.substring(0, 4)}.json`)
         .subscribe((entreprises) => {
           entreprises = entreprises
-            .filter((entreprise) => entreprise.naf.startsWith(naf))
+            .filter(
+              (entreprise) =>
+                entreprise.naf.startsWith(naf) &&
+                maxBounds.getSouth() < entreprise.latitude &&
+                maxBounds.getWest() < entreprise.longitude &&
+                maxBounds.getNorth() > entreprise.latitude &&
+                maxBounds.getEast() > entreprise.longitude,
+            )
             .sort((e1, e2) => e1.etablissement.localeCompare(e2.etablissement));
           entreprises.forEach((entreprise) => {
             entreprise.effectif = Referentiel.effectifParCode[entreprise.codeEffectif];
           });
           observer.next(entreprises);
+        });
+    });
+  }
+
+  public normaliser(str: string): string {
+    return str
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase();
+  }
+
+  public communes(): Observable<Array<Commune>> {
+    return new Observable((observer: Observer<Array<Commune>>) => {
+      this.http
+        .get<Array<Commune>>(`${environment.urlReferentiel}/communesFrance2026.json`)
+        .subscribe((communes) => {
+          communes.forEach((commune) => {
+            commune.nomNormalise = this.normaliser(commune.nom);
+          });
+          observer.next(communes);
         });
     });
   }

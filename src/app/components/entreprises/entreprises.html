@@ -1,17 +1,18 @@
 <mat-accordion>
-  <mat-expansion-panel #panneauSelecteur>
+  <mat-expansion-panel #panneauSelecteurs>
     <mat-expansion-panel-header>
       <mat-panel-title>{{ 'components.entreprises.selecteur_naf.liste_activites' | translate }}</mat-panel-title>
     </mat-expansion-panel-header>
-    <app-selecteur-naf (nafRev2)="afficherCarte($event)"></app-selecteur-naf>
+    <app-selecteur-commune (commune)="definirCommune($event)" (rayon)="definirRayon($event)"></app-selecteur-commune>
+    <app-selecteur-naf (nafRev2)="definirNafRev2($event)"></app-selecteur-naf>
   </mat-expansion-panel>
 
   <mat-expansion-panel #panneauCarte>
     <mat-expansion-panel-header>
       <mat-panel-title>{{ 'components.entreprises.selecteur_naf.liste_entreprises' | translate }}</mat-panel-title>
       <mat-panel-description>
-        @if (nafRev2()) {
-          <span [innerHTML]="`${nafRev2()?.nom} (${nafRev2()?.code})`"></span>
+        @if (nafRev2Selectionnee()) {
+          <span [innerHTML]="`${nafRev2Selectionnee()?.nom} (${nafRev2Selectionnee()?.code})`"></span>
         }
       </mat-panel-description>
     </mat-expansion-panel-header>

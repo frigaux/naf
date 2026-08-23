@@ -13,6 +13,8 @@ import * as L from 'leaflet';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { Referentiel } from '../../../services/referentiel';
 import { Entreprise } from '../../../services/entreprise';
+import { Commune } from '../../../services/commune';
+import { LatLngBounds } from 'leaflet';
 
 @Component({
   selector: 'app-carte-entreprises',
@@ -21,7 +23,7 @@ import { Entreprise } from '../../../services/entreprise';
   styleUrl: './carte-entreprises.sass',
 })
 export class CarteEntreprises implements AfterViewInit {
-  entrepriseSelectionnee = output<Entreprise>();
+  outputEntrepriseSelectionnee = output<Entreprise>({ alias: 'entrepriseSelectionnee' });
 
   private referentiel = inject(Referentiel);
 
@@ -69,24 +71,37 @@ export class CarteEntreprises implements AfterViewInit {
     this.groupeMarqueurs.addTo(this.carte);
   }
 
-  public placerMarqueursEntreprises(nafRev2?: NafRev2): void {
+  public positionner(commune: Commune, rayon: number): void {
+    this.carte.setZoom(rayon < 10 ? 12 : rayon < 30 ? 11 : 10);
+    this.carte.setView([commune.latitude, commune.longitude]);
+    const deltaLatitude = (180 / Math.PI) * (rayon / 6371);
+    const deltaLongitude = (180 / Math.PI) * (rayon / (6371 * Math.cos(commune.longitude)));
+    this.carte.setMaxBounds([
+      [commune.latitude - deltaLatitude, commune.longitude - deltaLongitude],
+      [commune.latitude + deltaLatitude, commune.longitude + deltaLongitude],
+    ]);
+  }
+
+  public placerMarqueursEntreprises(nafRev2: NafRev2): void {
     this.groupeMarqueurs.clearLayers();
 
-    if (this.carte && nafRev2) {
+    if (this.carte) {
       this.chargement.set(true);
-      this.referentiel.entreprises(nafRev2.code).subscribe((entreprises) => {
-        entreprises.forEach((entreprise) => {
-          L.marker([entreprise.latitude, entreprise.longitude], {
-            icon: CarteEntreprises.iconeMarqueur,
-          })
-            .addTo(this.carte)
-            .on('mouseover', () => {
-              this.entrepriseSelectionnee.emit(entreprise);
+      this.referentiel
+        .entreprises(nafRev2.code, this.carte.options.maxBounds as LatLngBounds)
+        .subscribe((entreprises) => {
+          entreprises.forEach((entreprise) => {
+            L.marker([entreprise.latitude, entreprise.longitude], {
+              icon: CarteEntreprises.iconeMarqueur,
             })
-            .addTo(this.groupeMarqueurs);
+              .addTo(this.carte)
+              .on('mouseover', () => {
+                this.outputEntrepriseSelectionnee.emit(entreprise);
+              })
+              .addTo(this.groupeMarqueurs);
+          });
+          this.chargement.set(false);
         });
-        this.chargement.set(false);
-      });
     }
   }
 }

@@ -5,8 +5,12 @@
   },
   "components": {
     "entreprises": {
+      "selecteur_commune": {
+        "commune": "Commune",
+        "rayon": "dans un rayon de {{rayon}}km"
+      },
       "selecteur_naf": {
-        "liste_activites": "Liste des activités",
+        "liste_activites": "Choix de la commune et de l'activité",
         "filtrer_activites": "Filtrer les activités",
         "liste_entreprises": "Liste des entreprises"
       },

@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, ViewChild, viewChild, WritableSignal } from '@angular/core';
+import { Component, OnInit, signal, viewChild, WritableSignal } from '@angular/core';
 import { SelecteurNAF } from './selecteur-naf/selecteur-naf';
 import { CarteEntreprises } from './carte-entreprises/carte-entreprises';
 import {
@@ -12,6 +12,8 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { NafRev2 } from '../../services/naf-rev2';
 import { FicheEntreprise } from './fiche-entreprise/fiche-entreprise';
 import { Entreprise } from '../../services/entreprise';
+import { SelecteurCommune } from './selecteur-commune/selecteur-commune';
+import { Commune } from '../../services/commune';
 
 @Component({
   selector: 'app-entreprises',
@@ -25,37 +27,55 @@ import { Entreprise } from '../../services/entreprise';
     TranslatePipe,
     MatExpansionPanelDescription,
     FicheEntreprise,
+    SelecteurCommune,
   ],
   templateUrl: './entreprises.html',
   styleUrl: './entreprises.sass',
 })
 export class Entreprises implements OnInit {
-  private panneauSelecteur = viewChild.required<MatExpansionPanel>('panneauSelecteur');
+  private panneauSelecteurs = viewChild.required<MatExpansionPanel>('panneauSelecteurs');
   private panneauCarte = viewChild.required<MatExpansionPanel>('panneauCarte');
 
   private carteEntreprises = viewChild.required<CarteEntreprises>('carteEntreprises');
   private ficheEntreprise = viewChild.required<FicheEntreprise>('ficheEntreprise');
 
   // données pour la vue
-  protected nafRev2: WritableSignal<NafRev2 | undefined> = signal(undefined);
+  protected nafRev2Selectionnee: WritableSignal<NafRev2 | undefined> = signal(undefined);
 
-  // TODO : sélecteur de ville et rayon affichage des marqueurs
-  // TODO : regénérer les JSON des entreprises
+  private communeSelectionnee?: Commune;
+  private rayonSelectionne?: number;
 
   ngOnInit(): void {
-    this.panneauSelecteur().open();
+    this.panneauSelecteurs().open();
     this.panneauCarte().close();
   }
 
-  protected afficherCarte(nafRev2: NafRev2) {
-    this.nafRev2.set(nafRev2);
-    this.panneauSelecteur().close();
-    this.panneauCarte().open();
-    this.carteEntreprises().placerMarqueursEntreprises(nafRev2);
-    this.ficheEntreprise().reinitialiser();
+  private afficherCarte() {
+    if (this.communeSelectionnee && this.rayonSelectionne && this.nafRev2Selectionnee()) {
+      this.panneauSelecteurs().close();
+      this.panneauCarte().open();
+      this.carteEntreprises().positionner(this.communeSelectionnee, this.rayonSelectionne);
+      this.carteEntreprises().placerMarqueursEntreprises(this.nafRev2Selectionnee()!);
+      this.ficheEntreprise().reinitialiser();
+    }
   }
 
   protected afficherEntreprise(entreprise: Entreprise) {
     this.ficheEntreprise().afficher(entreprise);
+  }
+
+  protected definirCommune(commune: Commune) {
+    this.communeSelectionnee = commune;
+    this.afficherCarte();
+  }
+
+  protected definirRayon(rayon: number) {
+    this.rayonSelectionne = rayon;
+    this.afficherCarte();
+  }
+
+  protected definirNafRev2(nafRev2: NafRev2) {
+    this.nafRev2Selectionnee.set(nafRev2);
+    this.afficherCarte();
   }
 }
