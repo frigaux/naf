@@ -84,7 +84,6 @@ export class CarteEntreprises implements AfterViewInit {
 
   public placerMarqueursEntreprises(nafRev2: NafRev2): void {
     this.groupeMarqueurs.clearLayers();
-
     if (this.carte) {
       this.chargement.set(true);
       this.referentiel
@@ -95,10 +94,11 @@ export class CarteEntreprises implements AfterViewInit {
               icon: CarteEntreprises.iconeMarqueur,
             })
               .addTo(this.carte)
-              .on('mouseover', () => {
+              .on('click', () => {
                 this.outputEntrepriseSelectionnee.emit(entreprise);
               })
-              .addTo(this.groupeMarqueurs);
+              .addTo(this.groupeMarqueurs)
+              .bindTooltip(entreprise.etablissement);
           });
           this.chargement.set(false);
         });

@@ -18,6 +18,7 @@ import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { MatSlider, MatSliderThumb } from '@angular/material/slider';
 import { CarteEntreprises } from '../carte-entreprises/carte-entreprises';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   imports: [
@@ -33,6 +34,7 @@ import { CarteEntreprises } from '../carte-entreprises/carte-entreprises';
     MatSlider,
     MatSliderThumb,
     FormsModule,
+    MatIcon,
   ],
   selector: 'app-selecteur-commune',
   styleUrl: './selecteur-commune.sass',
@@ -44,40 +46,46 @@ export class SelecteurCommune implements OnInit {
 
   private referentiel = inject(Referentiel);
 
-  protected nom: FormControl<string> = new FormControl();
+  protected rechercheCommune: FormControl<string> = new FormControl();
   protected rayon: FormControl<number> = new FormControl();
 
   // données pour la vue
   protected chargement: WritableSignal<boolean> = signal(true);
   protected readonly communes: WritableSignal<Array<Commune>> = signal<Array<Commune>>([]);
   protected readonly communesFiltrees: WritableSignal<Array<Commune>> = signal<Array<Commune>>([]);
+  protected icone: WritableSignal<string> = signal("error");
 
   constructor() {
-    this.nom.valueChanges.subscribe((o) => {
+    this.rechercheCommune.valueChanges.subscribe((o) => {
       if (typeof o === 'string') {
         this.filtrerCommunes(o);
+        this.icone.set("error");
       } else {
         this.outputCommune.emit(o);
+        this.icone.set('check');
       }
     });
   }
 
   ngOnInit(): void {
-    this.rayon.setValue(25);
-    this.outputRayon.emit(25);
+    this.rayon.setValue(5);
+    this.outputRayon.emit(5);
     this.referentiel.communes().subscribe((communes) => {
       this.communes.set(communes);
       this.chargement.set(false);
     });
   }
 
-  filtrerCommunes(nom: string): void {
-    if (typeof nom === 'string') {
-      const nomNormalise = this.referentiel.normaliser(nom);
-      if (nomNormalise.length > 2) {
-        this.communesFiltrees.set(
-          this.communes().filter((commune) => commune.nomNormalise.includes(nomNormalise)),
-        );
+  filtrerCommunes(chaine: string): void {
+    if (typeof chaine === 'string') {
+      const chaineNormalisee = this.referentiel.normaliser(chaine);
+      const communesFiltrees = this.communes().filter(
+        (commune) =>
+          commune.nomNormalise.includes(chaineNormalisee) ||
+          commune.codePostal.startsWith(chaineNormalisee),
+      );
+      if (communesFiltrees.length < 200) {
+        this.communesFiltrees.set(communesFiltrees);
       }
     }
   }

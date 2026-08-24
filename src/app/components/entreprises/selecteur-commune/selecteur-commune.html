@@ -4,16 +4,18 @@
 
 @if (!chargement()) {
   <form>
+    <mat-icon [fontIcon]="icone()" [class]="icone()"></mat-icon>
     <mat-form-field>
       <mat-label>{{ 'components.entreprises.selecteur_commune.commune' | translate }}</mat-label>
       <input type="text"
              aria-label="Commune"
              matInput
-             [formControl]="nom"
+             [formControl]="rechercheCommune"
              [matAutocomplete]="auto">
-      <mat-autocomplete #auto="matAutocomplete" [displayWith]="commune => commune ? commune.nom : '' ">
+      <mat-autocomplete #auto="matAutocomplete"
+                        [displayWith]="commune => commune ? commune.nom : '' ">
         @for (commune of communesFiltrees(); track commune) {
-          <mat-option [value]="commune">{{ commune.nom }}</mat-option>
+          <mat-option [value]="commune">{{ commune.nom }} ({{ commune.codePostal }})</mat-option>
         }
       </mat-autocomplete>
     </mat-form-field>

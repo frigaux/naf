@@ -28,6 +28,20 @@
         <label>{{ 'components.entreprises.fiche_entreprise.effectif' | translate }}</label>
         <span>{{ entreprise.effectif }}</span>
       </div>
+      <div class="ligne">
+        <label>{{ 'components.entreprises.fiche_entreprise.liens' | translate }}</label>
+        <span>
+          <a href="{{ `https://www.pagesjaunes.fr/siret/${entreprise.siret}` }}" target="_blank">
+            {{ 'components.entreprises.fiche_entreprise.pages_jaunes' | translate }}
+          </a>
+          <a href="{{ `https://annuaire-entreprises.data.gouv.fr/etablissement/${entreprise.siret}` }}" target="_blank">
+            {{ 'components.entreprises.fiche_entreprise.annuaire' | translate }}
+          </a>
+          <a href="{{ `https://www.societe.com/societe/${entreprise.etablissement.replaceAll(' ','').toLowerCase()}-${entreprise.siret.substring(0, 9)}` }}.html" target="_blank">
+            {{ 'components.entreprises.fiche_entreprise.société' | translate }}
+          </a>
+        </span>
+      </div>
     </mat-card-content>
   </mat-card>
 }

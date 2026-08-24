@@ -19,7 +19,11 @@
         "siret": "SIRET",
         "date_creation": "Date de création",
         "etablissement_siege": "Etablissement siège",
-        "effectif": "Effectif"
+        "effectif": "Effectif",
+        "liens": "Liens",
+        "pages_jaunes": "pages jaunes",
+        "annuaire": "annuaire des entreprises",
+        "société": "société"
       }
     }
   }

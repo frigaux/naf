@@ -16,14 +16,16 @@ class CommuneToJSON:
         firstRow = True
         for row in csvReader:
             nomStandard = row[1]
+            codePostal = row[17]
             latitude = row[52]
             longitude = row[53]
-            if (latitude and longitude):
+            if (nomStandard and codePostal and latitude and longitude):
                 if (not firstRow):
                     jsonFile.write(",")
                 firstRow = False
                 jsonFile.write("\n  {\n"
                                f'    "nom": "{nomStandard.strip()}",\n'
+                               f'    "codePostal": "{codePostal.strip()}",\n'
                                f'    "latitude": {latitude},\n'
                                f'    "longitude": {longitude}\n'
                                "  }")
