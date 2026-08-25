@@ -8,7 +8,7 @@
     <mat-form-field>
       <mat-label>{{ 'components.entreprises.selecteur_commune.commune' | translate }}</mat-label>
       <input type="text"
-             aria-label="Commune"
+             aria-label="commune"
              matInput
              [formControl]="rechercheCommune"
              [matAutocomplete]="auto">
@@ -22,7 +22,7 @@
 
     <label>{{ 'components.entreprises.selecteur_commune.rayon' | translate : { rayon: rayon.value } }}</label>
     <mat-slider min="5" max="50" step="1" discrete [displayWith]="value => `${value}km`">
-      <input matSliderThumb [formControl]="rayon" (mouseup)="rayonModifie()">
+      <input matSliderThumb aria-label="rayon" [formControl]="rayon" (valueChange)="rayonModifie()">
     </mat-slider>
   </form>
 }

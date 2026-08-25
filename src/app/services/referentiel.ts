@@ -6,6 +6,7 @@ import { NafRev2 } from './naf-rev2';
 import { Entreprise } from './entreprise';
 import { Commune } from './commune';
 import { LatLngBounds, LatLngBoundsExpression, LatLngBoundsLiteral } from 'leaflet';
+import { LimitesGPS } from './limites-gps';
 
 @Service()
 export class Referentiel {
@@ -71,7 +72,7 @@ export class Referentiel {
     }
   }
 
-  public entreprises(naf: string, maxBounds: LatLngBounds): Observable<Array<Entreprise>> {
+  public entreprises(naf: string, limitesGPS: LimitesGPS): Observable<Array<Entreprise>> {
     return new Observable((observer: Observer<Array<Entreprise>>) => {
       this.http
         .get<Array<Entreprise>>(`${environment.urlReferentiel}/${naf.substring(0, 4)}.json`)
@@ -80,10 +81,10 @@ export class Referentiel {
             .filter(
               (entreprise) =>
                 entreprise.naf.startsWith(naf) &&
-                maxBounds.getSouth() < entreprise.latitude &&
-                maxBounds.getWest() < entreprise.longitude &&
-                maxBounds.getNorth() > entreprise.latitude &&
-                maxBounds.getEast() > entreprise.longitude,
+                limitesGPS.latitudeMinimum < entreprise.latitude &&
+                limitesGPS.longitudeMinimum < entreprise.longitude &&
+                limitesGPS.latitudeMaximum > entreprise.latitude &&
+                limitesGPS.longitudeMaximum > entreprise.longitude,
             )
             .sort((e1, e2) => e1.etablissement.localeCompare(e2.etablissement));
           entreprises.forEach((entreprise) => {

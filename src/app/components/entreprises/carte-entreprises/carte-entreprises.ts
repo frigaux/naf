@@ -15,6 +15,7 @@ import { Referentiel } from '../../../services/referentiel';
 import { Entreprise } from '../../../services/entreprise';
 import { Commune } from '../../../services/commune';
 import { LatLngBounds } from 'leaflet';
+import { LimitesGPS } from '../../../services/limites-gps';
 
 @Component({
   selector: 'app-carte-entreprises',
@@ -26,6 +27,8 @@ export class CarteEntreprises implements AfterViewInit {
   outputEntrepriseSelectionnee = output<Entreprise>({ alias: 'entrepriseSelectionnee' });
 
   private referentiel = inject(Referentiel);
+
+  private limitesGPS?: LimitesGPS;
 
   @ViewChild('conteneurCarte') conteneurCarte!: ElementRef;
   private carte!: L.Map;
@@ -72,36 +75,53 @@ export class CarteEntreprises implements AfterViewInit {
   }
 
   public positionner(commune: Commune, rayon: number): void {
-    this.carte.setZoom(rayon < 10 ? 12 : rayon < 30 ? 11 : 10);
+    this.carte.setZoom(rayon < 11 ? 12 : rayon < 26 ? 11 : 10);
     this.carte.setView([commune.latitude, commune.longitude]);
-    const deltaLatitude = (180 / Math.PI) * (rayon / 6371);
-    const deltaLongitude = (180 / Math.PI) * (rayon / (6371 * Math.cos(commune.longitude)));
+
+    const deltaLatitude = this.calculerDeltaLatitude(rayon);
+    const deltaLongitude = this.calculerDeltaLongitude(rayon, commune);
+
+    this.limitesGPS = {
+      latitudeMinimum: commune.latitude - deltaLatitude,
+      longitudeMinimum: commune.longitude - deltaLongitude,
+      latitudeMaximum: commune.latitude + deltaLatitude,
+      longitudeMaximum: commune.longitude + deltaLongitude,
+    };
+
+    const deltaLatitudeCarte = this.calculerDeltaLatitude(rayon * 1.1);
+    const deltaLongitudeCarte = this.calculerDeltaLongitude(rayon * 1.1, commune);
     this.carte.setMaxBounds([
-      [commune.latitude - deltaLatitude, commune.longitude - deltaLongitude],
-      [commune.latitude + deltaLatitude, commune.longitude + deltaLongitude],
+      [commune.latitude - deltaLatitudeCarte, commune.longitude - deltaLongitudeCarte],
+      [commune.latitude + deltaLatitudeCarte, commune.longitude + deltaLongitudeCarte],
     ]);
+  }
+
+  private calculerDeltaLongitude(rayon: number, commune: Commune) {
+    return (180 / Math.PI) * (rayon / (6371 * Math.abs(Math.cos(commune.longitude))));
+  }
+
+  private calculerDeltaLatitude(rayon: number) {
+    return (180 / Math.PI) * (rayon / 6371);
   }
 
   public placerMarqueursEntreprises(nafRev2: NafRev2): void {
     this.groupeMarqueurs.clearLayers();
     if (this.carte) {
       this.chargement.set(true);
-      this.referentiel
-        .entreprises(nafRev2.code, this.carte.options.maxBounds as LatLngBounds)
-        .subscribe((entreprises) => {
-          entreprises.forEach((entreprise) => {
-            L.marker([entreprise.latitude, entreprise.longitude], {
-              icon: CarteEntreprises.iconeMarqueur,
+      this.referentiel.entreprises(nafRev2.code, this.limitesGPS!).subscribe((entreprises) => {
+        entreprises.forEach((entreprise) => {
+          L.marker([entreprise.latitude, entreprise.longitude], {
+            icon: CarteEntreprises.iconeMarqueur,
+          })
+            .addTo(this.carte)
+            .on('click', () => {
+              this.outputEntrepriseSelectionnee.emit(entreprise);
             })
-              .addTo(this.carte)
-              .on('click', () => {
-                this.outputEntrepriseSelectionnee.emit(entreprise);
-              })
-              .addTo(this.groupeMarqueurs)
-              .bindTooltip(entreprise.etablissement);
-          });
-          this.chargement.set(false);
+            .addTo(this.groupeMarqueurs)
+            .bindTooltip(entreprise.etablissement);
         });
+        this.chargement.set(false);
+      });
     }
   }
 }

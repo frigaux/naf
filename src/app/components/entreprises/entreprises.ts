@@ -71,7 +71,6 @@ export class Entreprises implements OnInit {
 
   protected definirRayon(rayon: number) {
     this.rayonSelectionne = rayon;
-    this.afficherCarte();
   }
 
   protected definirNafRev2(nafRev2: NafRev2) {

@@ -1,12 +1,30 @@
-mat-accordion
-  margin: 1rem
-
 div.conteneur
   display: flex
 
   div.ligne
     display: flex
-    flex-direction: row
 
     app-carte-entreprises, app-fiche-entreprise
       margin-left: 1rem
+
+@media (orientation: landscape)
+  div.conteneur
+    div.ligne
+      flex-direction: row
+
+      app-carte-entreprises
+        height: 70vh
+        width: 45vw
+
+
+@media (orientation: portrait)
+  div.conteneur
+    div.ligne
+      flex-direction: column
+
+      app-carte-entreprises
+        height: 50vh
+        width: 90vw
+
+      app-fiche-entreprise
+        margin-top: 1rem
