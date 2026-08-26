@@ -118,7 +118,11 @@ export class CarteEntreprises implements AfterViewInit {
               this.outputEntrepriseSelectionnee.emit(entreprise);
             })
             .addTo(this.groupeMarqueurs)
-            .bindTooltip(entreprise.etablissement);
+            .bindTooltip(entreprise.etablissement, {
+              permanent: true,
+              offset: [10, 0],
+              interactive: true
+            });
         });
         this.chargement.set(false);
       });
