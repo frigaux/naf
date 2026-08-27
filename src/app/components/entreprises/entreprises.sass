@@ -1,3 +1,12 @@
+.mat-expansion-panel-header
+  border-radius: initial
+
+.mat-expansion-panel-header:not(hover)
+  background-color: var(--mat-sys-primary) !important
+
+.mat-expansion-panel-header:hover
+  background-color: #00458f !important
+
 div.conteneur
   display: flex
 
@@ -5,26 +14,32 @@ div.conteneur
     display: flex
 
     app-carte-entreprises, app-fiche-entreprise
-      margin-left: 1rem
+      margin-top: 1rem
 
 @media (orientation: landscape)
   div.conteneur
     div.ligne
       flex-direction: row
 
-      app-carte-entreprises
-        height: 70vh
-        width: 45vw
+      app-carte-entreprises, app-fiche-entreprise
+        width: calc(50vw - 2rem - 24px)
 
+      app-carte-entreprises
+        height: calc(100vh - 125px - 4rem)
+
+      app-fiche-entreprise
+        margin-left: 1rem
 
 @media (orientation: portrait)
   div.conteneur
     div.ligne
       flex-direction: column
 
+      app-carte-entreprises, app-fiche-entreprise
+        width: calc(100vw - 2rem - 48px)
+
       app-carte-entreprises
         height: 50vh
-        width: 90vw
 
       app-fiche-entreprise
         margin-top: 1rem
