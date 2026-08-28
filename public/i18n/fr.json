@@ -14,6 +14,9 @@
         "filtrer_activites": "Filtrer les activités",
         "liste_entreprises": "Liste des entreprises"
       },
+      "carte_entreprise": {
+        "trop_de_resultats": "La recherche a retourné un trop grand nombre d'entreprises : {{nbEntreprises}}. Seules les entreprises avec un effectif défini sont affichées. Essayez de réduire le rayon couvert autour de la commune ou de cliquer sur une sous activité pour réduire le résultat de la recherche."
+      },
       "fiche_entreprise": {
         "naf": "Code NAF",
         "siret": "SIRET",

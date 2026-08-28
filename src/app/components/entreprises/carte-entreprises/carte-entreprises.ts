@@ -14,8 +14,8 @@ import { MatProgressBar } from '@angular/material/progress-bar';
 import { Referentiel } from '../../../services/referentiel';
 import { Entreprise } from '../../../services/entreprise';
 import { Commune } from '../../../services/commune';
-import { LatLngBounds } from 'leaflet';
 import { LimitesGPS } from '../../../services/limites-gps';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-carte-entreprises',
@@ -27,6 +27,7 @@ export class CarteEntreprises implements AfterViewInit {
   outputEntrepriseSelectionnee = output<Entreprise>({ alias: 'entrepriseSelectionnee' });
 
   private referentiel = inject(Referentiel);
+  private translate = inject(TranslateService);
 
   private limitesGPS?: LimitesGPS;
 
@@ -90,6 +91,7 @@ export class CarteEntreprises implements AfterViewInit {
 
     const deltaLatitudeCarte = this.calculerDeltaLatitude(rayon * 1.1);
     const deltaLongitudeCarte = this.calculerDeltaLongitude(rayon * 1.1, commune);
+
     this.carte.setMaxBounds([
       [commune.latitude - deltaLatitudeCarte, commune.longitude - deltaLongitudeCarte],
       [commune.latitude + deltaLatitudeCarte, commune.longitude + deltaLongitudeCarte],
@@ -97,7 +99,7 @@ export class CarteEntreprises implements AfterViewInit {
   }
 
   private calculerDeltaLongitude(rayon: number, commune: Commune) {
-    return (180 / Math.PI) * (rayon / (6371 * Math.abs(Math.cos(commune.longitude))));
+    return rayon / (111.32 * Math.abs(Math.cos(commune.latitude)));
   }
 
   private calculerDeltaLatitude(rayon: number) {
@@ -110,7 +112,11 @@ export class CarteEntreprises implements AfterViewInit {
       this.chargement.set(true);
       this.referentiel.entreprises(nafRev2.code, this.limitesGPS!).subscribe((entreprises) => {
         if (entreprises.length > 1000) {
-          alert(`La recherche a retourné un trop grand nombre d'entreprises : ${entreprises.length}. Seules les entreprises avec un effectif défini sont affichées.`);
+          alert(
+            this.translate.instant('components.entreprises.carte_entreprise.trop_de_resultats', {
+              nbEntreprises: entreprises.length,
+            }),
+          );
           entreprises = entreprises.filter((entreprise) => entreprise.codeEffectif !== 'NN');
         }
         entreprises.forEach((entreprise) => {
@@ -125,7 +131,7 @@ export class CarteEntreprises implements AfterViewInit {
             .bindTooltip(entreprise.etablissement, {
               permanent: true,
               offset: [10, 0],
-              interactive: true
+              interactive: true,
             });
         });
         this.chargement.set(false);
