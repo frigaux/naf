@@ -69,15 +69,19 @@ export class SelecteurNAF implements OnInit {
   // TODO : recherche par code ?
   private _filtrer(recherche: string, nafRev2s: Array<NafRev2>): Array<NafRev2> {
     const resultat: Array<NafRev2> = [];
+    const rechercheNormalisee = this.referentiel.normaliser(recherche);
     for (const nafRev2 of nafRev2s) {
-      if (nafRev2.nom.indexOf(recherche) === -1) {
+      const idx = nafRev2.nomNormalise.indexOf(rechercheNormalisee);
+      if (idx === -1) {
         const enfants = this._filtrer(recherche, nafRev2.enfants);
         if (enfants.length > 0) {
           nafRev2.enfants = enfants;
           resultat.push(nafRev2);
         }
       } else {
-        nafRev2.nom = nafRev2.nom.replace(recherche, `<strong>${recherche}</strong>`);
+        const nom = nafRev2.nom;
+        const lg = idx + recherche.length;
+        nafRev2.nom = `${nom.substring(0, idx)}<strong>${nom.substring(idx, lg)}</strong>${nom.substring(lg, nom.length)}`;
         resultat.push(nafRev2);
       }
     }

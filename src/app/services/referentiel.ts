@@ -42,11 +42,13 @@ export class Referentiel {
     if (typeof json === 'object') {
       const nafRev2: Array<NafRev2> = [];
       Object.keys(json).forEach((key: string) => {
+        const nom = niveau < 4 ? key : json[key];
         nafRev2.push({
           code: niveau < 4 ? this.mapCode(key, json, niveau) : key,
-          nom: niveau < 4 ? key : json[key],
+          nom,
           matButton: '',
           enfants: this.mapNafRev2(json[key], niveau + 1),
+          nomNormalise: this.normaliser(nom),
         });
       });
       return nafRev2.sort((nafRev2a, nafRev2b) => nafRev2a.nom.localeCompare(nafRev2b.nom));

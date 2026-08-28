@@ -3,4 +3,5 @@ export interface NafRev2 {
   nom: string;
   matButton: string;
   enfants: Array<NafRev2>;
+  nomNormalise: string;
 }

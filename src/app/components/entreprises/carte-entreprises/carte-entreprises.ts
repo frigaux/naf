@@ -109,6 +109,10 @@ export class CarteEntreprises implements AfterViewInit {
     if (this.carte) {
       this.chargement.set(true);
       this.referentiel.entreprises(nafRev2.code, this.limitesGPS!).subscribe((entreprises) => {
+        if (entreprises.length > 1000) {
+          alert(`La recherche a retourné un trop grand nombre d'entreprises : ${entreprises.length}. Seules les entreprises avec un effectif défini sont affichées.`);
+          entreprises = entreprises.filter((entreprise) => entreprise.codeEffectif !== 'NN');
+        }
         entreprises.forEach((entreprise) => {
           L.marker([entreprise.latitude, entreprise.longitude], {
             icon: CarteEntreprises.iconeMarqueur,
