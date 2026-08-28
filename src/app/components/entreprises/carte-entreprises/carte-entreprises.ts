@@ -99,7 +99,8 @@ export class CarteEntreprises implements AfterViewInit {
   }
 
   private calculerDeltaLongitude(rayon: number, commune: Commune) {
-    return rayon / (111.32 * Math.abs(Math.cos(commune.latitude)));
+    const latitudeRadians = commune.latitude * (Math.PI / 180);
+    return rayon / (111.32 * Math.cos(latitudeRadians));
   }
 
   private calculerDeltaLatitude(rayon: number) {
