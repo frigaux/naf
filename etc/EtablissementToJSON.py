@@ -31,10 +31,9 @@ class EtablissementToJSON:
             nafRev2 = row[51] == 'NAFRev2'
             coordonneeLambertAbscisse = row[28]
             coordonneeLambertOrdonnee = row[29]
-            if (
-                    diffusion and actif and etablissement and coordonneeLambertAbscisse
-                    and coordonneeLambertOrdonnee and etablissement != '[ND]' and etablissement.find('"') == -1
-                    and nafRev2 and naf.startswith(sousSectionNAF)):
+            if (naf.startswith(sousSectionNAF)
+                    and diffusion and actif and etablissement and coordonneeLambertAbscisse
+                    and coordonneeLambertOrdonnee and etablissement != '[ND]' and nafRev2):
                 codeEffectif = row[5]
                 siret = row[2]
                 dateCreation = row[4]
@@ -43,12 +42,13 @@ class EtablissementToJSON:
                 voie = row[17]
                 codePostal = row[18]
                 commune = row[19]
-                longitude, latitude = self.lambert93_to_wgs84.transform(coordonneeLambertAbscisse, coordonneeLambertOrdonnee)
+                longitude, latitude = self.lambert93_to_wgs84.transform(coordonneeLambertAbscisse,
+                                                                        coordonneeLambertOrdonnee)
                 if (not firstRow):
                     jsonFile.write(",")
                 firstRow = False
                 jsonFile.write("\n  {\n"
-                               f'    "etablissement": "{etablissement.strip()}",\n'
+                               f'    "etablissement": "{re.sub(r'["\t\\]', ' ',etablissement.strip())}",\n'
                                f'    "naf": "{naf.strip()}",\n'
                                f'    "siret": "{siret.strip()}",\n'
                                f'    "codeEffectif": "{codeEffectif.strip()}",\n'
@@ -71,5 +71,9 @@ class EtablissementToJSON:
                     self.convert(naf)
 
 
-EtablissementToJSON().convertAll()
-# EtablissementToJSON().convert('62.0')
+# EtablissementToJSON().convertAll()
+EtablissementToJSON().convert('74.2')
+EtablissementToJSON().convert('71.2')
+EtablissementToJSON().convert('33.2')
+EtablissementToJSON().convert('35.1')
+EtablissementToJSON().convert('96.0')
