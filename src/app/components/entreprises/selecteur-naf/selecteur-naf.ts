@@ -9,7 +9,7 @@ import {
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
 import { Referentiel } from '../../../services/referentiel';
-import { NafRev2 } from '../../../services/naf-rev2';
+import { NafRev2 } from '../../../services/naf-rev2.interface';
 import { form, FormField } from '@angular/forms/signals';
 import { MatFormField, MatInput, MatLabel } from '@angular/material/input';
 import { TranslatePipe } from '@ngx-translate/core';

@@ -10,7 +10,7 @@ import {
   WritableSignal,
 } from '@angular/core';
 import { Referentiel } from '../../../services/referentiel';
-import { Commune } from '../../../services/commune';
+import { Commune } from '../../../services/commune.interface';
 import { MatFormField, MatInput, MatLabel } from '@angular/material/input';
 import { MatAutocomplete, MatAutocompleteTrigger, MatOption } from '@angular/material/autocomplete';
 import { MatProgressBar } from '@angular/material/progress-bar';

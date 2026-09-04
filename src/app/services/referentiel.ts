@@ -2,11 +2,11 @@ import { inject, Service } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, Observer } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { NafRev2 } from './naf-rev2';
-import { Entreprise } from './entreprise';
-import { Commune } from './commune';
+import { NafRev2 } from './naf-rev2.interface';
+import { Entreprise } from './entreprise.interface';
+import { Commune } from './commune.interface';
 import { LatLngBounds, LatLngBoundsExpression, LatLngBoundsLiteral } from 'leaflet';
-import { LimitesGPS } from './limites-gps';
+import { LimitesGPS } from './limites-gps.interface';
 
 @Service()
 export class Referentiel {

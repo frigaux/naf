@@ -8,7 +8,7 @@ import {
 } from '@angular/material/card';
 import { DatePipe } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
-import { Entreprise } from '../../../services/entreprise';
+import { Entreprise } from '../../../services/entreprise.interface';
 
 @Component({
   imports: [

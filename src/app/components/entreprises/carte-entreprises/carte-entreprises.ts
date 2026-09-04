@@ -8,13 +8,13 @@ import {
   ViewChild,
   WritableSignal,
 } from '@angular/core';
-import { NafRev2 } from '../../../services/naf-rev2';
+import { NafRev2 } from '../../../services/naf-rev2.interface';
 import * as L from 'leaflet';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { Referentiel } from '../../../services/referentiel';
-import { Entreprise } from '../../../services/entreprise';
-import { Commune } from '../../../services/commune';
-import { LimitesGPS } from '../../../services/limites-gps';
+import { Entreprise } from '../../../services/entreprise.interface';
+import { Commune } from '../../../services/commune.interface';
+import { LimitesGPS } from '../../../services/limites-gps.interface';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({

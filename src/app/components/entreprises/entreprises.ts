@@ -9,11 +9,11 @@ import {
   MatExpansionPanelTitle,
 } from '@angular/material/expansion';
 import { TranslatePipe } from '@ngx-translate/core';
-import { NafRev2 } from '../../services/naf-rev2';
+import { NafRev2 } from '../../services/naf-rev2.interface';
 import { FicheEntreprise } from './fiche-entreprise/fiche-entreprise';
-import { Entreprise } from '../../services/entreprise';
+import { Entreprise } from '../../services/entreprise.interface';
 import { SelecteurCommune } from './selecteur-commune/selecteur-commune';
-import { Commune } from '../../services/commune';
+import { Commune } from '../../services/commune.interface';
 
 @Component({
   selector: 'app-entreprises',
