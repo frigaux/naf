@@ -51,7 +51,7 @@ export class SelecteurCommune implements OnInit {
 
   // données pour la vue
   protected chargement: WritableSignal<boolean> = signal(true);
-  protected readonly communes: WritableSignal<Array<Commune>> = signal<Array<Commune>>([]);
+  public readonly communes: WritableSignal<Array<Commune>> = signal<Array<Commune>>([]);
   protected readonly communesFiltrees: WritableSignal<Array<Commune>> = signal<Array<Commune>>([]);
   protected icone: WritableSignal<string> = signal("error");
 

@@ -44,7 +44,7 @@ export class SelecteurNAF implements OnInit {
 
   // données pour la vue
   protected chargement: WritableSignal<boolean> = signal(true);
-  protected readonly nafRev2s: WritableSignal<Array<NafRev2>> = signal([]);
+  public readonly nafRev2s: WritableSignal<Array<NafRev2>> = signal([]);
   protected readonly hasEnfants = (_: number, node: NafRev2) => node.enfants.length > 0;
 
   // formulaire
