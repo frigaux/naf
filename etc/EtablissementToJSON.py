@@ -1,5 +1,7 @@
 import csv, re, os
 from pyproj import Transformer
+from io import Reader, TextIOWrapper
+
 
 class EtablissementToJSON:
     """Conversion du fichier csv listant les établissements vers une structure JSON par section NAF"""
@@ -7,20 +9,18 @@ class EtablissementToJSON:
     level3 = re.compile(r"^\d{2}\.\d$")
     lambert93_to_wgs84 = Transformer.from_crs("EPSG:2154", "EPSG:4326", always_xy=True)
 
-    def convert(self, sousSectionNAF):
-        print(f'Conversion pour la sous section : {sousSectionNAF}')
-        inputFile = './data/StockEtablissement_utf8.csv'
-        outputFile = f'./json/{sousSectionNAF}.json'
-        if not os.path.exists(outputFile):
-            with open(outputFile, 'w', encoding="utf-8") as jsonFile:
-                jsonFile.write('[')
-                with open(inputFile, 'r', encoding="utf-8") as csvFile:
-                    csvReader = csv.reader(csvFile, delimiter=',', quotechar='"')
-                    self._convertRows(csvReader, jsonFile, sousSectionNAF)
-                jsonFile.write('\n]')
+    def convertAllSousSectionNAF(self):
+        sousSectionsNAF = self._getSousSectionsNAF()
+        fichierBySousSectionNAF = self._openFichierBySousSectionNAF(sousSectionsNAF)
 
-    def _convertRows(self, csvReader: Reader, jsonFile: TextIOWrapper[_WrappedBuffer], sousSectionNAF):
-        firstRow = True
+        inputFile = './data/StockEtablissement_utf8.csv'
+        with open(inputFile, 'r', encoding="utf-8") as csvFile:
+            csvReader = csv.reader(csvFile, delimiter=',', quotechar='"')
+            self._convertRows(csvReader, fichierBySousSectionNAF)
+
+        self._closeFichierBySousSectionNAF(fichierBySousSectionNAF)
+
+    def _convertRows(self, csvReader: Reader, fichierBySousSectionNAF: dict[str, TextIOWrapper]):
         for row in csvReader:
             diffusion = row[3] == 'O'
             actif = row[45] == 'A'
@@ -31,7 +31,7 @@ class EtablissementToJSON:
             nafRev2 = row[51] == 'NAFRev2'
             coordonneeLambertAbscisse = row[28]
             coordonneeLambertOrdonnee = row[29]
-            if (naf.startswith(sousSectionNAF)
+            if (len(naf) > 3 and naf[0:4] in fichierBySousSectionNAF
                     and diffusion and actif and etablissement and coordonneeLambertAbscisse
                     and coordonneeLambertOrdonnee and etablissement != '[ND]' and nafRev2):
                 codeEffectif = row[5]
@@ -44,36 +44,49 @@ class EtablissementToJSON:
                 commune = row[19]
                 longitude, latitude = self.lambert93_to_wgs84.transform(coordonneeLambertAbscisse,
                                                                         coordonneeLambertOrdonnee)
-                if (not firstRow):
-                    jsonFile.write(",")
-                firstRow = False
-                jsonFile.write("\n  {\n"
-                               f'    "etablissement": "{re.sub(r'["\t\\]', ' ',etablissement.strip())}",\n'
-                               f'    "naf": "{naf.strip()}",\n'
-                               f'    "siret": "{siret.strip()}",\n'
-                               f'    "codeEffectif": "{codeEffectif.strip()}",\n'
-                               f'    "dateCreation": "{dateCreation.strip()}",\n'
-                               f'    "etablissementSiege": {etablissementSiege},\n'
-                               f'    "typeVoie": "{typeVoie.strip()}",\n'
-                               f'    "voie": "{voie.strip()}",\n'
-                               f'    "codePostal": "{codePostal.strip()}",\n'
-                               f'    "commune": "{commune.strip()}",\n'
-                               f'    "longitude": {longitude},\n'
-                               f'    "latitude": {latitude}\n'
-                               "  }")
+                fichierBySousSectionNAF.get(naf[0:4]).write("  {\n"
+                                                            f'    "etablissement": "{re.sub(r'["\t\\]', ' ', etablissement.strip())}",\n'
+                                                            f'    "naf": "{naf.strip()}",\n'
+                                                            f'    "siret": "{siret.strip()}",\n'
+                                                            f'    "codeEffectif": "{codeEffectif.strip()}",\n'
+                                                            f'    "dateCreation": "{dateCreation.strip()}",\n'
+                                                            f'    "etablissementSiege": {etablissementSiege},\n'
+                                                            f'    "typeVoie": "{typeVoie.strip()}",\n'
+                                                            f'    "voie": "{voie.strip()}",\n'
+                                                            f'    "codePostal": "{codePostal.strip()}",\n'
+                                                            f'    "commune": "{commune.strip()}",\n'
+                                                            f'    "longitude": {longitude},\n'
+                                                            f'    "latitude": {latitude}\n'
+                                                            "  },\n")
 
-    def convertAll(self):
+    def _getSousSectionsNAF(self) -> list[str]:
+        sousSectionsNAF = list[str]()
         with open('./data/int_courts_naf_rev_2.csv', 'r', encoding="utf-8") as csvFile:
             csvReader = csv.reader(csvFile, delimiter=';', quotechar='"')
             for row in csvReader:
                 naf = row[1]
                 if (self.level3.match(naf)):
-                    self.convert(naf)
+                    sousSectionsNAF.append(naf)
+        return sousSectionsNAF
+
+    def _openFichierBySousSectionNAF(self, sousSectionsNAF) -> dict[str, TextIOWrapper]:
+        fichierBySousSectionNAF = dict[str, TextIOWrapper]()
+        for sousSectionNAF in sousSectionsNAF:
+            nomFichier = f'./json/{sousSectionNAF}.json'
+            fichier = open(nomFichier, 'w', encoding="utf-8")
+            fichierBySousSectionNAF[sousSectionNAF] = fichier
+            fichier.write('[\n')
+        return fichierBySousSectionNAF
+
+    def _closeFichierBySousSectionNAF(self, fichierBySousSectionNAF: dict[str, TextIOWrapper]):
+        for sousSectionNAF, fichier in fichierBySousSectionNAF.items():
+            taille = fichier.tell()
+            if taille > 3:
+                fichier.seek(taille - 3)
+                fichier.truncate()
+                fichier.write('\n')
+            fichier.write(']')
+            fichier.close()
 
 
-# EtablissementToJSON().convertAll()
-EtablissementToJSON().convert('74.2')
-EtablissementToJSON().convert('71.2')
-EtablissementToJSON().convert('33.2')
-EtablissementToJSON().convert('35.1')
-EtablissementToJSON().convert('96.0')
+EtablissementToJSON().convertAllSousSectionNAF()
