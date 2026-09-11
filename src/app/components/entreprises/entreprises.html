@@ -7,7 +7,7 @@
     <app-selecteur-naf (nafRev2)="definirNafRev2($event)"></app-selecteur-naf>
   </mat-expansion-panel>
 
-  <mat-expansion-panel #panneauCarte>
+  <mat-expansion-panel #panneauCarte (click)="clickPanneauCarte()">
     <mat-expansion-panel-header>
       <mat-panel-title>{{ 'components.entreprises.selecteur_naf.liste_entreprises' | translate }}</mat-panel-title>
       <mat-panel-description>

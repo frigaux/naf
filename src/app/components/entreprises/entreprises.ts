@@ -77,4 +77,10 @@ export class Entreprises implements OnInit {
     this.nafRev2Selectionnee.set(nafRev2);
     this.afficherCarte();
   }
+
+  protected clickPanneauCarte() {
+    if (this.panneauCarte().expanded) {
+      this.afficherCarte();
+    }
+  }
 }
