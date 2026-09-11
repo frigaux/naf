@@ -1,4 +1,5 @@
 import csv
+from io import Reader, TextIOWrapper
 
 class CommuneToJSON:
     """Conversion du fichier csv listant les communes vers une structure JSON"""
@@ -12,7 +13,7 @@ class CommuneToJSON:
                 self._convertRows(csvReader, jsonFile)
             jsonFile.write('\n]')
 
-    def _convertRows(self, csvReader: Reader, jsonFile: TextIOWrapper[_WrappedBuffer]):
+    def _convertRows(self, csvReader: Reader, jsonFile: TextIOWrapper):
         firstRow = True
         for row in csvReader:
             nomStandard = row[1]
