@@ -21,7 +21,7 @@
     </mat-form-field>
 
     <label>{{ 'components.entreprises.selecteur_commune.rayon' | translate : { rayon: rayon.value } }}</label>
-    <mat-slider min="5" max="50" step="1" discrete [displayWith]="value => `${value}km`">
+    <mat-slider min="1" max="50" step="1" discrete [displayWith]="value => `${value}km`">
       <input matSliderThumb aria-label="rayon" [formControl]="rayon" (valueChange)="rayonModifie()">
     </mat-slider>
   </form>

@@ -16,7 +16,7 @@
         "avec_unites_legales": "avec unités légales"
       },
       "carte_entreprise": {
-        "trop_de_resultats": "La recherche a retourné un trop grand nombre d'entreprises : {{nbEntreprises}}. Seules les entreprises avec un effectif défini sont affichées. Essayez de réduire le rayon couvert autour de la commune ou de cliquer sur une sous activité pour réduire le résultat de la recherche."
+        "trop_de_resultats": "La recherche a retourné un trop grand nombre d'entreprises : {{nbEntreprises}}. Seules les 1000 premières entreprises avec un effectif défini sont affichées. Essayez de réduire le rayon couvert autour de la commune, de cliquer sur une sous activité ou de décocher 'avec unités légales' pour réduire le résultat de la recherche."
       },
       "fiche_entreprise": {
         "naf": "Code NAF",

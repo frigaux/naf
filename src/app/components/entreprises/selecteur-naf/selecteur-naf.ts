@@ -52,12 +52,12 @@ export class SelecteurNAF implements OnInit {
   protected readonly hasEnfants = (_: number, node: NafRev2) => node.enfants.length > 0;
 
   // formulaire
-  formModel = signal<Formulaire>({
+  modeleFormulaire = signal<Formulaire>({
     champRecherche: '',
     avecUnitesLegales: false,
   });
 
-  protected readonly formulaire = form(this.formModel);
+  protected readonly formulaire = form(this.modeleFormulaire);
 
   ngOnInit(): void {
     this.referentiel.nafRev2().subscribe((nafRev2s) => {
@@ -68,14 +68,14 @@ export class SelecteurNAF implements OnInit {
   }
 
   protected filtrer() {
-    const recherche = this.formModel().champRecherche;
+    const recherche = this.modeleFormulaire().champRecherche;
     if (this._nafRev2s) {
       this.nafRev2s.set(this._filtrer(recherche, JSON.parse(JSON.stringify(this._nafRev2s))));
     }
   }
 
   protected unitesLegales() {
-    this.outputAvecUnitesLegales.emit(this.formModel().avecUnitesLegales);
+    this.outputAvecUnitesLegales.emit(this.modeleFormulaire().avecUnitesLegales);
   }
 
   // TODO : recherche par code ?
@@ -101,9 +101,9 @@ export class SelecteurNAF implements OnInit {
   }
 
   protected reinitialiser() {
-    this.formModel.set({
+    this.modeleFormulaire.set({
       champRecherche: '',
-      avecUnitesLegales: this.formModel().avecUnitesLegales,
+      avecUnitesLegales: this.modeleFormulaire().avecUnitesLegales,
     });
     if (this._nafRev2s) {
       this.nafRev2s.set(JSON.parse(JSON.stringify(this._nafRev2s)));

@@ -120,7 +120,9 @@ export class CarteEntreprises implements AfterViewInit {
                 nbEntreprises: entreprises.length,
               }),
             );
-            entreprises = entreprises.filter((entreprise) => entreprise.codeEffectif !== 'NN');
+            entreprises = entreprises
+              .filter((entreprise) => entreprise.codeEffectif !== 'NN')
+              .slice(0, 1000);
           }
           entreprises.forEach((entreprise) => {
             L.marker([entreprise.latitude, entreprise.longitude], {

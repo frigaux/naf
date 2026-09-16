@@ -84,18 +84,11 @@ export class Entreprises implements OnInit {
 
   protected definirAvecUnitesLegales(avecUnitesLegales: boolean) {
     this.avecUnitesLegales = avecUnitesLegales;
+    this.afficherPanneauCarte();
   }
 
   protected definirNafRev2(nafRev2: NafRev2) {
     this.nafRev2Selectionnee.set(nafRev2);
     this.afficherPanneauCarte();
   }
-
-  // protected clickPanneauCarte(e: MouseEvent) {
-  //   var element = e.target as HTMLElement;
-  //   console.log(element.tagName.toLowerCase(), this.panneauCarte().expanded);
-  //   if (element.tagName.toLowerCase() == 'mat-panel-title' && this.panneauCarte().expanded) {
-  //     this.afficherCarte();
-  //   }
-  // }
 }
