@@ -1,6 +1,6 @@
 import { inject, Service } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, Observer } from 'rxjs';
+import { forkJoin, Observable, Observer } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { NafRev2 } from './naf-rev2.interface';
 import { Entreprise } from './entreprise.interface';
@@ -74,11 +74,18 @@ export class Referentiel {
     }
   }
 
-  public entreprises(naf: string, limitesGPS: LimitesGPS): Observable<Array<Entreprise>> {
+  public entreprises(
+    naf: string,
+    limitesGPS: LimitesGPS,
+    avecUnitesLegales: boolean,
+  ): Observable<Array<Entreprise>> {
     return new Observable((observer: Observer<Array<Entreprise>>) => {
-      this.http
-        .get<Array<Entreprise>>(`${environment.urlReferentiel}/${naf.substring(0, 4)}.json`)
-        .subscribe((entreprises) => {
+      forkJoin(this.requetes(naf, avecUnitesLegales)).subscribe({
+        next: (resultats) => {
+          let entreprises: Array<Entreprise> = resultats[0];
+          if (resultats.length == 2) {
+            entreprises = entreprises.concat(resultats[1]);
+          }
           entreprises = entreprises
             .filter(
               (entreprise) =>
@@ -93,8 +100,23 @@ export class Referentiel {
             entreprise.effectif = Referentiel.effectifParCode[entreprise.codeEffectif];
           });
           observer.next(entreprises);
-        });
+        },
+      });
     });
+  }
+
+  private requetes(naf: string, avecUnitesLegales: boolean) {
+    const requetes: Array<Observable<any>> = [
+      this.http.get<Array<Entreprise>>(`${environment.urlReferentiel}/${naf.substring(0, 4)}.json`),
+    ];
+    if (avecUnitesLegales) {
+      requetes.push(
+        this.http.get<Array<Entreprise>>(
+          `${environment.urlReferentiel}/unitesLegales/${naf.substring(0, 4)}.json`,
+        ),
+      );
+    }
+    return requetes;
   }
 
   public normaliser(str: string): string {

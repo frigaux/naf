@@ -44,21 +44,30 @@ export class Entreprises implements OnInit {
 
   private communeSelectionnee?: Commune;
   private rayonSelectionne?: number;
+  private avecUnitesLegales: boolean = false;
 
   ngOnInit(): void {
     this.panneauSelecteurs().open();
     this.panneauCarte().close();
   }
 
-  private afficherCarte() {
+  private afficherPanneauCarte() {
     if (this.communeSelectionnee && this.rayonSelectionne && this.nafRev2Selectionnee()) {
       this.panneauSelecteurs().close();
       this.panneauCarte().open();
-      this.carteEntreprises().positionner(this.communeSelectionnee, this.rayonSelectionne);
-      this.carteEntreprises().placerMarqueursEntreprises(this.nafRev2Selectionnee()!);
-      this.ficheEntreprise().reinitialiser();
     }
   }
+
+  protected chargerCarte() {
+    if (this.communeSelectionnee && this.rayonSelectionne && this.nafRev2Selectionnee()) {
+      this.carteEntreprises().positionner(this.communeSelectionnee, this.rayonSelectionne);
+      this.carteEntreprises().placerMarqueursEntreprises(
+        this.nafRev2Selectionnee()!,
+        this.avecUnitesLegales,
+      );
+      this.ficheEntreprise().reinitialiser();
+    }
+  };
 
   protected afficherEntreprise(entreprise: Entreprise) {
     this.ficheEntreprise().afficher(entreprise);
@@ -66,21 +75,27 @@ export class Entreprises implements OnInit {
 
   protected definirCommune(commune: Commune) {
     this.communeSelectionnee = commune;
-    this.afficherCarte();
+    this.afficherPanneauCarte();
   }
 
   protected definirRayon(rayon: number) {
     this.rayonSelectionne = rayon;
   }
 
-  protected definirNafRev2(nafRev2: NafRev2) {
-    this.nafRev2Selectionnee.set(nafRev2);
-    this.afficherCarte();
+  protected definirAvecUnitesLegales(avecUnitesLegales: boolean) {
+    this.avecUnitesLegales = avecUnitesLegales;
   }
 
-  protected clickPanneauCarte() {
-    if (this.panneauCarte().expanded) {
-      this.afficherCarte();
-    }
+  protected definirNafRev2(nafRev2: NafRev2) {
+    this.nafRev2Selectionnee.set(nafRev2);
+    this.afficherPanneauCarte();
   }
+
+  // protected clickPanneauCarte(e: MouseEvent) {
+  //   var element = e.target as HTMLElement;
+  //   console.log(element.tagName.toLowerCase(), this.panneauCarte().expanded);
+  //   if (element.tagName.toLowerCase() == 'mat-panel-title' && this.panneauCarte().expanded) {
+  //     this.afficherCarte();
+  //   }
+  // }
 }

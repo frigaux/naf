@@ -107,36 +107,38 @@ export class CarteEntreprises implements AfterViewInit {
     return (180 / Math.PI) * (rayon / 6371);
   }
 
-  public placerMarqueursEntreprises(nafRev2: NafRev2): void {
+  public placerMarqueursEntreprises(nafRev2: NafRev2, avecUnitesLegales: boolean): void {
     this.groupeMarqueurs.clearLayers();
     if (this.carte) {
       this.chargement.set(true);
-      this.referentiel.entreprises(nafRev2.code, this.limitesGPS!).subscribe((entreprises) => {
-        if (entreprises.length > 1000) {
-          alert(
-            this.translate.instant('components.entreprises.carte_entreprise.trop_de_resultats', {
-              nbEntreprises: entreprises.length,
-            }),
-          );
-          entreprises = entreprises.filter((entreprise) => entreprise.codeEffectif !== 'NN');
-        }
-        entreprises.forEach((entreprise) => {
-          L.marker([entreprise.latitude, entreprise.longitude], {
-            icon: CarteEntreprises.iconeMarqueur,
-          })
-            .addTo(this.carte)
-            .on('click', () => {
-              this.outputEntrepriseSelectionnee.emit(entreprise);
+      this.referentiel
+        .entreprises(nafRev2.code, this.limitesGPS!, avecUnitesLegales)
+        .subscribe((entreprises) => {
+          if (entreprises.length > 1000) {
+            alert(
+              this.translate.instant('components.entreprises.carte_entreprise.trop_de_resultats', {
+                nbEntreprises: entreprises.length,
+              }),
+            );
+            entreprises = entreprises.filter((entreprise) => entreprise.codeEffectif !== 'NN');
+          }
+          entreprises.forEach((entreprise) => {
+            L.marker([entreprise.latitude, entreprise.longitude], {
+              icon: CarteEntreprises.iconeMarqueur,
             })
-            .addTo(this.groupeMarqueurs)
-            .bindTooltip(entreprise.etablissement, {
-              permanent: true,
-              offset: [10, 0],
-              interactive: true,
-            });
+              .addTo(this.carte)
+              .on('click', () => {
+                this.outputEntrepriseSelectionnee.emit(entreprise);
+              })
+              .addTo(this.groupeMarqueurs)
+              .bindTooltip(entreprise.etablissement, {
+                permanent: true,
+                offset: [10, 0],
+                interactive: true,
+              });
+          });
+          this.chargement.set(false);
         });
-        this.chargement.set(false);
-      });
     }
   }
 }

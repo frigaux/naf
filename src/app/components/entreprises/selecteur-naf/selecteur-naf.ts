@@ -14,6 +14,8 @@ import { form, FormField } from '@angular/forms/signals';
 import { MatFormField, MatInput, MatLabel } from '@angular/material/input';
 import { TranslatePipe } from '@ngx-translate/core';
 import { MatProgressBar } from '@angular/material/progress-bar';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { Formulaire } from './formulaire';
 
 @Component({
   selector: 'app-selecteur-naf',
@@ -31,12 +33,14 @@ import { MatProgressBar } from '@angular/material/progress-bar';
     FormField,
     TranslatePipe,
     MatProgressBar,
+    MatCheckbox,
   ],
   templateUrl: './selecteur-naf.html',
   styleUrl: './selecteur-naf.sass',
 })
 export class SelecteurNAF implements OnInit {
   outputNafRev2 = output<NafRev2>({ alias: 'nafRev2' });
+  outputAvecUnitesLegales = output<boolean>({ alias: 'avecUnitesLegales' });
 
   private referentiel = inject(Referentiel);
 
@@ -48,8 +52,12 @@ export class SelecteurNAF implements OnInit {
   protected readonly hasEnfants = (_: number, node: NafRev2) => node.enfants.length > 0;
 
   // formulaire
-  protected readonly champRecherche = signal<string>('');
-  protected readonly formulaire = form(this.champRecherche);
+  formModel = signal<Formulaire>({
+    champRecherche: '',
+    avecUnitesLegales: false,
+  });
+
+  protected readonly formulaire = form(this.formModel);
 
   ngOnInit(): void {
     this.referentiel.nafRev2().subscribe((nafRev2s) => {
@@ -60,10 +68,14 @@ export class SelecteurNAF implements OnInit {
   }
 
   protected filtrer() {
-    const recherche = this.champRecherche();
+    const recherche = this.formModel().champRecherche;
     if (this._nafRev2s) {
       this.nafRev2s.set(this._filtrer(recherche, JSON.parse(JSON.stringify(this._nafRev2s))));
     }
+  }
+
+  protected unitesLegales() {
+    this.outputAvecUnitesLegales.emit(this.formModel().avecUnitesLegales);
   }
 
   // TODO : recherche par code ?
@@ -89,7 +101,10 @@ export class SelecteurNAF implements OnInit {
   }
 
   protected reinitialiser() {
-    this.champRecherche.set('');
+    this.formModel.set({
+      champRecherche: '',
+      avecUnitesLegales: this.formModel().avecUnitesLegales,
+    });
     if (this._nafRev2s) {
       this.nafRev2s.set(JSON.parse(JSON.stringify(this._nafRev2s)));
     }
