@@ -1,14 +1,4 @@
-import {
-  Component,
-  ElementRef,
-  inject,
-  OnInit,
-  output,
-  Signal,
-  signal,
-  viewChild,
-  WritableSignal,
-} from '@angular/core';
+import { Component, inject, OnInit, output, signal, WritableSignal } from '@angular/core';
 import { Referentiel } from '../../../services/referentiel';
 import { Commune } from '../../../services/commune.interface';
 import { MatFormField, MatInput, MatLabel } from '@angular/material/input';
@@ -17,7 +7,6 @@ import { MatProgressBar } from '@angular/material/progress-bar';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { MatSlider, MatSliderThumb } from '@angular/material/slider';
-import { CarteEntreprises } from '../carte-entreprises/carte-entreprises';
 import { MatIcon } from '@angular/material/icon';
 
 @Component({
@@ -53,13 +42,13 @@ export class SelecteurCommune implements OnInit {
   protected chargement: WritableSignal<boolean> = signal(true);
   public readonly communes: WritableSignal<Array<Commune>> = signal<Array<Commune>>([]);
   protected readonly communesFiltrees: WritableSignal<Array<Commune>> = signal<Array<Commune>>([]);
-  protected icone: WritableSignal<string> = signal("error");
+  protected icone: WritableSignal<string> = signal('error');
 
   constructor() {
     this.rechercheCommune.valueChanges.subscribe((o) => {
       if (typeof o === 'string') {
         this.filtrerCommunes(o);
-        this.icone.set("error");
+        this.icone.set('error');
       } else {
         this.outputCommune.emit(o);
         this.icone.set('check');

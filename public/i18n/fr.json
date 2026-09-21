@@ -5,14 +5,14 @@
   },
   "components": {
     "entreprises": {
+      "selecteurs": "Choix de la commune et de l'activité",
+      "resultat": "Liste des entreprises",
       "selecteur_commune": {
         "commune": "Commune",
         "rayon": "dans un rayon de {{rayon}}km"
       },
       "selecteur_naf": {
-        "liste_activites": "Choix de la commune et de l'activité",
         "filtrer_activites": "Filtrer les activités",
-        "liste_entreprises": "Liste des entreprises",
         "avec_unites_legales": "avec unités légales"
       },
       "carte_entreprise": {
