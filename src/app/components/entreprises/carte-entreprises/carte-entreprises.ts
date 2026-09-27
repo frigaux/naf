@@ -116,7 +116,7 @@ export class CarteEntreprises implements AfterViewInit {
         .subscribe((entreprises) => {
           if (entreprises.length > 1000) {
             alert(
-              this.translate.instant('components.entreprises.carte_entreprise.trop_de_resultats', {
+              this.translate.instant('components.entreprises.carte_entreprises.trop_de_resultats', {
                 nbEntreprises: entreprises.length,
               }),
             );
