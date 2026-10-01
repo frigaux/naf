@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, viewChild, WritableSignal } from '@angular/core';
+import { Component, inject, OnInit, signal, viewChild, WritableSignal } from '@angular/core';
 import { SelecteurNAF } from './selecteur-naf/selecteur-naf';
 import { CarteEntreprises } from './carte-entreprises/carte-entreprises';
 import {
@@ -8,12 +8,13 @@ import {
   MatExpansionPanelHeader,
   MatExpansionPanelTitle,
 } from '@angular/material/expansion';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { NafRev2 } from '../../services/naf-rev2.interface';
 import { FicheEntreprise } from './fiche-entreprise/fiche-entreprise';
 import { Entreprise } from '../../services/entreprise.interface';
 import { SelecteurCommune } from './selecteur-commune/selecteur-commune';
 import { Commune } from '../../services/commune.interface';
+import { Message } from '../../services/message';
 
 @Component({
   selector: 'app-entreprises',
@@ -33,6 +34,9 @@ import { Commune } from '../../services/commune.interface';
   styleUrl: './entreprises.sass',
 })
 export class Entreprises implements OnInit {
+  private translateService = inject(TranslateService);
+  private message = inject(Message);
+
   private panneauSelecteurs = viewChild.required<MatExpansionPanel>('panneauSelecteurs');
   private panneauCarte = viewChild.required<MatExpansionPanel>('panneauCarte');
 
@@ -66,8 +70,12 @@ export class Entreprises implements OnInit {
         this.avecUnitesLegales,
       );
       this.ficheEntreprise().reinitialiser();
+    } else {
+      this.message.afficher(
+        this.translateService.instant('components.entreprises.formulaire_invalide'),
+      );
     }
-  };
+  }
 
   protected afficherEntreprise(entreprise: Entreprise) {
     this.ficheEntreprise().afficher(entreprise);

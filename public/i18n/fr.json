@@ -1,12 +1,15 @@
 {
   "commun": {
     "oui": "oui",
-    "non": "non"
+    "non": "non",
+    "aucun_resultat": "Aucun résultat",
+    "fermer": "Fermer"
   },
   "components": {
     "entreprises": {
       "selecteurs": "Choix de la commune et de l'activité",
       "resultat": "Liste des entreprises",
+      "formulaire_invalide": "Vous devez sélectionner une commune et une activité !",
       "selecteur_commune": {
         "commune": "Commune",
         "rayon": "dans un rayon de {{rayon}}km"

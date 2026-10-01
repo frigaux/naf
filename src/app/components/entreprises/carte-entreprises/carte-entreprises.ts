@@ -16,6 +16,7 @@ import { Entreprise } from '../../../services/entreprise.interface';
 import { Commune } from '../../../services/commune.interface';
 import { LimitesGPS } from '../../../services/limites-gps.interface';
 import { TranslateService } from '@ngx-translate/core';
+import { Message } from '../../../services/message';
 
 @Component({
   selector: 'app-carte-entreprises',
@@ -27,7 +28,8 @@ export class CarteEntreprises implements AfterViewInit {
   outputEntrepriseSelectionnee = output<Entreprise>({ alias: 'entrepriseSelectionnee' });
 
   private referentiel = inject(Referentiel);
-  private translate = inject(TranslateService);
+  private translateService = inject(TranslateService);
+  private message = inject(Message);
 
   private limitesGPS?: LimitesGPS;
 
@@ -114,33 +116,48 @@ export class CarteEntreprises implements AfterViewInit {
       this.referentiel
         .entreprises(nafRev2.code, this.limitesGPS!, avecUnitesLegales)
         .subscribe((entreprises) => {
-          if (entreprises.length > 1000) {
-            alert(
-              this.translate.instant('components.entreprises.carte_entreprises.trop_de_resultats', {
-                nbEntreprises: entreprises.length,
-              }),
-            );
-            entreprises = entreprises
-              .filter((entreprise) => entreprise.codeEffectif !== 'NN')
-              .slice(0, 1000);
+          if (entreprises.length === 0) {
+            this.message.afficher(this.translateService.instant('commun.aucun_resultat'));
           }
-          entreprises.forEach((entreprise) => {
-            L.marker([entreprise.latitude, entreprise.longitude], {
-              icon: CarteEntreprises.iconeMarqueur,
-            })
-              .addTo(this.carte)
-              .on('click', () => {
-                this.outputEntrepriseSelectionnee.emit(entreprise);
-              })
-              .addTo(this.groupeMarqueurs)
-              .bindTooltip(entreprise.etablissement, {
-                permanent: true,
-                offset: [10, 0],
-                interactive: true,
-              });
-          });
+          entreprises = this.limiterNbResultats(entreprises);
+          this.placerMarqueurs(entreprises);
           this.chargement.set(false);
         });
     }
+  }
+
+  private limiterNbResultats(entreprises: Array<Entreprise>): Array<Entreprise> {
+    if (entreprises.length > 1000) {
+      this.message.afficher(
+        this.translateService.instant(
+          'components.entreprises.carte_entreprises.trop_de_resultats',
+          {
+            nbEntreprises: entreprises.length,
+          },
+        ),
+      );
+      entreprises = entreprises
+        .filter((entreprise) => entreprise.codeEffectif !== 'NN')
+        .slice(0, 1000);
+    }
+    return entreprises;
+  }
+
+  private placerMarqueurs(entreprises: Array<Entreprise>) {
+    entreprises.forEach((entreprise) => {
+      L.marker([entreprise.latitude, entreprise.longitude], {
+        icon: CarteEntreprises.iconeMarqueur,
+      })
+        .addTo(this.carte)
+        .on('click', () => {
+          this.outputEntrepriseSelectionnee.emit(entreprise);
+        })
+        .addTo(this.groupeMarqueurs)
+        .bindTooltip(entreprise.etablissement, {
+          permanent: true,
+          offset: [10, 0],
+          interactive: true,
+        });
+    });
   }
 }
